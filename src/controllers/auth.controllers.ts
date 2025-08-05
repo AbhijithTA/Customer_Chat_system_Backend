@@ -3,6 +3,10 @@ import User, { IUser } from "../models/User.model";
 import generateToken from "../utils/generateToken";
 import sendTokenResponse from "../utils/sendToken";
 
+interface AuthenticatedRequest extends Request {
+  user?: IUser;
+}
+
 export const registerUser = async (req: Request, res: Response) => {
   try {
     const { name, email, password, role } = req.body;
@@ -40,6 +44,16 @@ export const loginUser = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
+};
+
+
+export const getMe = (req: AuthenticatedRequest, res: Response) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Not authorized' });
+  }
+
+  const { _id, name, email, role } = req.user;
+  res.status(200).json({ _id, name, email, role });
 };
 
 // LOGIN CREDENTIALS
