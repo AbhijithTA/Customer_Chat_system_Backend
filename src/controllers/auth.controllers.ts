@@ -1,28 +1,28 @@
-import { Request, Response } from 'express';
-import User, { IUser } from '../models/User.model';
-import generateToken from '../utils/generateToken';
+import { Request, Response } from "express";
+import User, { IUser } from "../models/User.model";
+import generateToken from "../utils/generateToken";
+import sendTokenResponse from "../utils/sendToken";
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
     const { name, email, password, role } = req.body;
 
-    const userExists = await User.findOne({ email }) as IUser | null;
+    const userExists = (await User.findOne({ email })) as IUser | null;
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: "User already exists" });
     }
 
-    const createdUser = await User.create({ name, email, password, role }) as IUser;
+    const createdUser = (await User.create({
+      name,
+      email,
+      password,
+      role,
+    })) as IUser;
 
-    res.status(201).json({
-      _id: createdUser._id,
-      name: createdUser.name,
-      email: createdUser.email,
-      role: createdUser.role,
-      token: generateToken(createdUser._id.toString()),
-    });
+    sendTokenResponse(createdUser, 201, res);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -30,20 +30,37 @@ export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email }) as IUser | null;
+    const user = (await User.findOne({ email })) as IUser | null;
     if (!user || !(await user.matchPassword(password))) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      token: generateToken(user._id.toString()),
-    });
+    sendTokenResponse(user, 200, res);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };
+
+// LOGIN CREDENTIALS
+
+// {
+//     "name":"admin",
+//     "email":"admin@123.com",
+//     "password":"admin123",
+//     "role":"admin"
+// }
+
+// {
+//     "name":"customer1",
+//     "email":"customer@123.com",
+//     "password":"customer123",
+//     "role":"customer"
+// }
+
+// {
+//     "name":"agent",
+//     "email":"agent@123.com",
+//     "password":"agent123",
+//     "role":"agent"
+// }
