@@ -19,8 +19,9 @@ export const protect = async (
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
-    const user = await User.findById(decoded.id).select('-password');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
+    
+    const user = await User.findById(decoded.userId).select('-password');
 
     if (!user) {
       res.status(401).json({ message: 'User not found' });
@@ -36,10 +37,10 @@ export const protect = async (
 
 export const authorize =
   (...roles: string[]) =>
-  (req: AuthRequest, res: Response, next: NextFunction): void => {
-    if (!req.user || !roles.includes(req.user.role)) {
-      res.status(403).json({ message: 'Forbidden: Access denied' });
-      return;
-    }
-    next();
-  };
+    (req: AuthRequest, res: Response, next: NextFunction): void => {
+      if (!req.user || !roles.includes(req.user.role)) {
+        res.status(403).json({ message: 'Forbidden: Access denied' });
+        return;
+      }
+      next();
+    };

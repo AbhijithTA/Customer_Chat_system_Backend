@@ -14,14 +14,15 @@ dotenv.config();
 import authRoutes from "./routes/auth.routes";
 import ticketRoutes from "./routes/ticket.routes";
 // import userRoutes from "./routes/userRoutes";
-// import messageRoutes from "./routes/messageRoutes";
+import messageRoutes from "./routes/message.route";
 import connectDB from "./config/db";
+import registerSocketHandlers from "./sockets";
 
 //initialising the express
 const app: Application = express();
 
 //middlewares
-app.use(cors({ origin: "*",  credentials: true }));
+app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
 app.use(cookieparser());
 
@@ -29,7 +30,7 @@ app.use(cookieparser());
 app.use("/api/auth", authRoutes);
 app.use("/api/tickets", ticketRoutes);
 // app.use("/api/users", userRoutes);
-// app.use("/api/messages", messageRoutes);
+app.use("/api/messages", messageRoutes);
 
 //root endpoint
 app.get("/", (req: Request, res: Response) => {
@@ -40,32 +41,18 @@ app.get("/", (req: Request, res: Response) => {
 const server = http.createServer(app);
 
 //initialising the socket server
-// const io = new SocketServer(server, {
-//     cors: {
-//         origin: "*",
-//         methods: ["GET", "POST"],
-//         credentials: true
-//     },
-// });
+const io = new SocketServer(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+});
 
-//socket server connection
-// io.on('connection',(socket) =>{
-//     console.log(`User connected ${socket.id}`);
+registerSocketHandlers(io);
 
-//     socket.on('joinRoom', (ticketId: string) =>{
-//         socket.join(ticketId);
-//         console.log(`User with id: ${socket.id} joined room: ${ticketId}`);
-//     });
 
-//     socket.on('sendMessage', ({ticketId, message}) =>{
-//         console.log('Message received', message);
-//         io.to(ticketId).emit('receiveMessage', message);
-//     });
 
-//     socket.on('disconnect', () => {
-//         console.log(`User disconnected ${socket.id}`);
-//     });
-// });
 
 // starting the server when database is connected
 connectDB()
