@@ -9,35 +9,38 @@ const registerChatHandlers = (io: Server, socket: Socket) => {
         console.log(`Socket ${socket.id} joined room ${ticketId}`)
     });
 
-    //sending the message
+    // sending the message
     socket.on('sendMessage', async (data: {
         ticketId: string;
-        sender: string;
+        sender: string; // this should be userId
         message: string;
     }) => {
         const { ticketId, sender, message } = data;
 
-        //saving the message into the db
         const savedMessage = await Message.create({
             ticketId,
             sender,
             message
         });
 
-        //broadcasting to all clients in the room
-        io.to(ticketId).emit('newMessage', savedMessage);
-        console.log('Message send to room:', ticketId, savedMessage.message);
+        const populatedMessage = await savedMessage.populate({
+            path: 'sender',
+            select: '_id name role'
+        });
 
-
+        io.to(ticketId).emit('newMessage', populatedMessage);
+        console.log('Message sent to room:', ticketId, populatedMessage.message);
     });
+
 
     // typing indicator
-    socket.on('typing', ({ ticketId, userId }) => {
-        socket.to(ticketId).emit('typing', { userId });
+    socket.on('typing', ({ ticketId, userId, name }) => {
+
+        socket.to(ticketId).emit('typing', { userId, name });
     });
 
-    socket.on('stopTyping', ({ ticketId, userId }) => {
-        socket.to(ticketId).emit('stopTyping', { userId });
+    socket.on('stopTyping', ({ ticketId, userId, name }) => {
+        socket.to(ticketId).emit('stopTyping', { userId, name });
     });
 
 

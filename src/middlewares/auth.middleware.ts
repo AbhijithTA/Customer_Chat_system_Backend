@@ -39,7 +39,6 @@ export const authorize =
 
   (...roles: string[]) =>
     (req: AuthRequest, res: Response, next: NextFunction): void => {
-      console.log('authorize middleware:', req.user);
 
       if (!req.user || !roles.includes(req.user.role)) {
         res.status(403).json({ message: 'Forbidden: Access denied' });
