@@ -30,6 +30,9 @@ export const registerUser = async (req: Request, res: Response) => {
   }
 };
 
+//================================================================================================================================//
+
+
 export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -47,6 +50,9 @@ export const loginUser = async (req: Request, res: Response) => {
 };
 
 
+//================================================================================================================================//
+
+
 export const getMe = (req: AuthenticatedRequest, res: Response) => {
   if (!req.user) {
     return res.status(401).json({ message: 'Not authorized' });
@@ -55,6 +61,9 @@ export const getMe = (req: AuthenticatedRequest, res: Response) => {
   const { _id, name, email, role } = req.user;
   res.status(200).json({ _id, name, email, role });
 };
+
+//================================================================================================================================//
+
 
 // LOGIN CREDENTIALS
 

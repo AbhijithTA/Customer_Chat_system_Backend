@@ -25,6 +25,8 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
     }
 }
 
+//================================================================================================================================//
+
 
 //get all messages in the ticket
 export const getMessagesByTicket = async (req: AuthRequest, res: Response) => {
@@ -37,3 +39,5 @@ export const getMessagesByTicket = async (req: AuthRequest, res: Response) => {
         res.status(500).json({ message: (error as Error).message });
     }
 }
+
+//================================================================================================================================//
