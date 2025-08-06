@@ -5,6 +5,7 @@ import {
   assignTicket,
   createTicket,
   getAllTickets,
+  getAssignedTickets,
   getMyTickets,
   updateTicketStatus,
 } from "../controllers/ticket.controller";
@@ -16,7 +17,7 @@ router.post("/", protect, authorize("customer"), createTicket);
 router.get("/my", protect, authorize("customer"), getMyTickets);
 
 //Agent
-router.get("/assigned", protect, authorize("agent"), getMyTickets);
+router.get("/assigned", protect, authorize("agent", ), getAssignedTickets);
 
 //admin
 router.get("/all", protect, authorize("admin"), getAllTickets);

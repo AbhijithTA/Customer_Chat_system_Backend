@@ -13,7 +13,7 @@ dotenv.config();
 //importing the routes
 import authRoutes from "./routes/auth.routes";
 import ticketRoutes from "./routes/ticket.routes";
-// import userRoutes from "./routes/userRoutes";
+import userRoutes from "./routes/user.routes";
 import messageRoutes from "./routes/message.route";
 import connectDB from "./config/db";
 import registerSocketHandlers from "./sockets";
@@ -29,7 +29,7 @@ app.use(cookieparser());
 //api routes
 app.use("/api/auth", authRoutes);
 app.use("/api/tickets", ticketRoutes);
-// app.use("/api/users", userRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/messages", messageRoutes);
 
 //root endpoint

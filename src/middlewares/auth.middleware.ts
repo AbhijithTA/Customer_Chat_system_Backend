@@ -20,7 +20,7 @@ export const protect = async (
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
-    
+
     const user = await User.findById(decoded.userId).select('-password');
 
     if (!user) {
@@ -36,8 +36,11 @@ export const protect = async (
 };
 
 export const authorize =
+
   (...roles: string[]) =>
     (req: AuthRequest, res: Response, next: NextFunction): void => {
+      console.log('authorize middleware:', req.user);
+
       if (!req.user || !roles.includes(req.user.role)) {
         res.status(403).json({ message: 'Forbidden: Access denied' });
         return;
