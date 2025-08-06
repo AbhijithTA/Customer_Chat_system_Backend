@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn src/server.ts",
-    "build": "tsc",
+    "build": "NODE_OPTIONS=--max_old_space_size=512 tsc",
     "start": "node dist/server.js"
   },
   "keywords": [],
