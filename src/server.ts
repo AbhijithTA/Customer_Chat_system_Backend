@@ -43,16 +43,20 @@ const server = http.createServer(app);
 //initialising the socket server
 const io = new SocketServer(server, {
   cors: {
-    origin: "*",
+    origin: process.env.CLIENT_URL,
     methods: ["GET", "POST"],
-    credentials: true
+    credentials: true,
   },
+  transports: ["websocket", "polling"],
+  connectionStateRecovery: {
+    maxDisconnectionDuration: 120000, 
+    skipMiddlewares: true,
+  },
+  pingInterval: 25000, 
+  pingTimeout: 5000,
 });
 
 registerSocketHandlers(io);
-
-
-
 
 // starting the server when database is connected
 connectDB()
